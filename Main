@@ -51,18 +51,120 @@ after will do above (nslookup fs-38453fe9.efs.ap-south-1.amazonaws.com) run same
 ref url:
 https://docs.aws.amazon.com/efs/latest/ug/mounting-fs-mount-cmd-dns-name.html
 
+note: mount in all servers
 sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-38453fe9.efs.ap-south-1.amazonaws.com:/ efs-mount-point
 
 above change file systemid to another id
 
 before we going to mount test it with
 df -h (we don't see any mount)
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-caf2fc3f.efs.us-east-1.amazonaws.com:/ /var/lib/jenkins/
 
-sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-38453fe9.efs.ap-south-1.amazonaws.com:/ /var/lib/jenkins/
+note: if u face any issues while on mount
+1. vpc name must enable hostnames
+2. under efs and instances in same vpc
+3.*** security group of efs and instances should be use same .
+4. while creating security group ssh + nfs (give same security group id).
+5. After efs status Network state will all come available (click on manage) --> under security groups use same security group to instances and efs.
 
 
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-e6b8c237.efs.ap-south-1.amazonaws.com:/ /var/lib/jenkins/
+after mount type df -h now u will see
+fs-caf2fc3f.efs.us-east-1.amazonaws.com:/  8.0E     0  8.0E   0% /var/lib/jenkins
+we will see in bottom
 
 
+** note: if u don't setup in fstab while reboot we lost data (efs)
+vi /etc/fstab (add below line)
+fs-caf2fc3f.efs.us-east-1.amazonaws.com:/   /var/lib/jenkins/   nfs
+
+checking the mount:
+umount /var/lib/jenkins
+df -h
+mount -a
+df -h
+
+reboot
+ 
+ after reboot we are going to install jenkins
+ 
+ ref url: https://www.jenkins.io/doc/book/installing/linux/
+ 
+ install jenkins
+ 
+ service satrt jenkins
+ 
+ new item + name + freestyle + build execute shell + save + build now
+ 
+ Now install jenkins on 2 nd server too
+ service jenkins start
+ 
+ login in web browser
+ now what ever u made changes in server1 it will appear in server2 bcoz of efs
+ 
+ create a job in server2 it will appear in server1
+ 
+ if u want see the changes done in server2 in server1 u need to restart the jenkins
+ 
+ service jenkins restart
+ 
+ now u will see that job in server1 also
+ 
+ su - jenkins
+ pwd
+ ssh-keygen
+ hit enter button 3 times
+ 
+ ------- now for slaves launch 3 or more instances with userdata openjdk8(java)
+ 
+ after launching all slave instances
+ login into that particular all servers
+ 
+ useradd -m jenkins
+ su - jenkins
+ ssh-keygen (3 times enter)
+ cd .ssh
+ rm -rf id_rsa*
+ under .ssh
+ vi authorized_keys
+ 
+ go to master of jenkins under .ssh copy the cat id_rsa.pub
+ 
+ copy that code paste in all slaves
+ vi authorized_keys
+ 
+ ** do the same operation in all slave nodes
+ 
+ now from master we can type under .ssh ssh jenkins@privateip we can login into any slave nodes
+ 
+ 
+ 
+ now jenkins dashboard ui
+ manage jenkins --> manage nodes --> new node --> name prod_slave_1(check on permanent agent)+ ok next-->
+ description (slave description) --> of executors depends on cpu u will choose --> remote directort (/home/jenkins) --> labels(PROD) --> launch method (via ssh) -->
+ host (slave private ip address) .
+ to continue we need credentials.
+ manage jenkins --> manage credentails --> stored scope to jenkins --> global tool configuration --> add crendials --> kind (ssh username with private key) -->
+ scope global --> id(forslaves) --> description (ssh key for slaves) --> username (jenkins) --> private key (cat id_rsa) --> paste the key .save.
+ 
+ manage jenkins --> manage nodes --> new node(configure) --> credentials (ssh key for slaves --> save
+ 
+ relaunch agent.
+ 
+ master or used for managed purpose and slaves are used for the executing jobs
+ 
+ 
+ after manage jenkins --> manage nodes --> new node
+ copy from existing node --> choose node (change the node name in input field)
+ --> lables (dev) --> host(slave2 private ip) --> change description save
+ relaunch the agent
+ 
+ 
+ now go to any job configure --> restrict where this project can run --> label expression (PROD) --> save.
+ 
+ 
+ 
+ 
+ 
+ 
 
 
