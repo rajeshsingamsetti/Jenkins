@@ -29,6 +29,130 @@ maven build tools integration
 
 github sample url:
 https://github.com/anshulc55/Jenkins_Upgradev3
+https://github.com/yankils/Simple-DevOps-Project
+
+Simple maven hello project
+https://github.com/yankils/hello-world
+
+Full devops notes:
+https://github.com/onlineTrainingguy/DevOpsNotes
+
+Total jenkins installation guide:
+https://github.com/yankils/Simple-DevOps-Project/blob/master/Jenkins/Jenkins_Installation.MD
+
+More about jenkins guide:
+
+https://github.com/onlineTrainingguy/DevOpsNotes/tree/master/Jenkins
+
+
+
+------All the best from Rajesh singamsetty
+
+
+"by adopting ci & cd u not only reducing risk and cathing the bugs quickly,but also move rapidly to working software."
+
+
+opensource
+automation tools used to build deliever the software products
+entirely written in java
+jenkins is forged from hudson
+it's a server based application and require a webserver like apache tomact.
+it will monitor the repetaed tasks
+
+we can build and test quickly.
+trigger immediatly changes done by developer
+on build failures will notify the errors to dev team
+
+
+Installing jenkins
+
+
+******** note: jenkins is not compatable with java9 or 10
+we must nedd java8 install on hostmachine
+to verify java version
+java --version
+
+
+Let’s start installation:
+Use any centos/rhel/aws linux os:
+With security groups: 8080,443,22,8089, or allow all trafiic.
+sudo su
+cd
+yum update -y
+yum install java-1.8*
+java -version
+find /usr/lib/jvm/java-1.8* | head -n 3
+vi .bash_profile (add below code)
+# User specific environment and startup programs
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.51.amzn1.x86_64
+M2_HOME=/opt/maven/apache-maven-3.6.3
+M2=$M2_HOME/bin
+PATH=$PATH:$HOME/bin:$JAVA_HOME:$M2_HOME:$M2
+
+***note JAVA_HOME path give exacly result of find /usr/lib/jvm/java-1.8* | head -n 3
+save : && exit && logout
+echo $JAVA_HOME . (we are successfully setting java manually)
+Now We are going to install jenkins:
+yum -y install wget
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+yum -y install jenkins
+# Start jenkins service
+service jenkins start
+# Setup Jenkins to start at boot,
+chkconfig jenkins on
+systemctl status jenkins
+
+http://YOUR-SERVER-PUBLIC-IP:8080
+cat /var/lib/jenkins/secrets/initialAdminPassword
+Give username and password start your jenkins server
+
+yum install -y git
+
+Now We Are going to configure apache tomcat
+
+Intially we are going maven installation automattically
+
+
+                                        Setting apache tomcat server:
+wget https://downloads.apache.org/tomcat/tomcat-8/v8.5.57/bin/apache-tomcat-8.5.57.tar.gz
+tar -xvzf apache-tomcat-8.5.57.tar.gz
+cd apache-tomcat-8.5.57
+ cd conf
+vi tomcat-users.xml (paste the below code)
+<role rolename="manager-gui"/>
+ <role rolename="manager-script"/>
+ <role rolename="manager-jmx"/>
+ <role rolename="manager-status"/>
+ <user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+ <user username="deployer" password="deployer" roles="manager-script"/>
+ <user username="tomcat" password="s3cret" roles="manager-gui"/>
+vi server.xml (change the port number 8080 to 80 or any number bcoz jenkins and apache bot are running on same port)
+<Connector port="80" protocol="HTTP/1.1"
+connectionTimeout="20000"
+redirectPort="8443" />
+save it
+find / -name context.xml (2 files will come need to change 2 files coment them values)
+vi /webapps/manager/META-INF/context.xml:
+<Context antiResourceLocking="false" privileged="true"> <!-- <Valve
+className="org.apache.catalina.valves.RemoteAddrValve"
+allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> --> </Context>
+comment the above line code as shown in text
+cd bin/
+./startup.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
