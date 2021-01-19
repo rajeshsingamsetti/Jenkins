@@ -1,1 +1,40 @@
-Testing
+Jenkins Master class
+
+jenkins intro & setup 
+build application for jenkins
+ci with jenkins
+cd with jenkins
+infrasrcture as code and automatin
+jenkins job dsl
+jenkins pipeline
+jenkins pipeline as code with jenkins file
+jenkins integration
+advance jenkins uses
+jenkins distributed builds
+jenkins aws integration
+jenkins ansible integration
+jenkins security checks management
+jenkins external job triggers
+email with jenkins
+maven build tools integration
+
+
+
+** manage ci & cd flow in engineering & production
+** build deploy with jenkins
+** integrate jenkins with devops tools like docker ansible & kubenetes & aws.
+* build jenkins pipeline
+* build jenkins pipeline as code
+* build jenkins dsl
+
+github sample url:
+https://github.com/anshulc55/Jenkins_Upgradev3
+
+
+
+
+
+
+
+
+
